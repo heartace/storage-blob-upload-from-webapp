@@ -125,7 +125,7 @@ namespace ImageResizeWebApp.Helpers
             return await Task.FromResult(thumbnailUrls);
         }
         
-        protected static string GetIPAddress()
+        private static string GetIPAddress()
         {
           System.Web.HttpContext context = System.Web.HttpContext.Current; 
           string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
