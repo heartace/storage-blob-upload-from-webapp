@@ -68,7 +68,7 @@ namespace ImageResizeWebApp.Helpers
             CloudBlobContainer container = blobClient.GetContainerReference(_storageConfig.ThumbnailContainer);
 
             // Set the permission of the container to public
-            await container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+            await container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Off });
 
             BlobContinuationToken continuationToken = null;
 
