@@ -96,12 +96,21 @@ namespace ImageResizeWebApp.Helpers
 
                     sasConstraints.Permissions = SharedAccessBlobPermissions.Read;
 
-                    var IPAdd = "114.84.158.184";
-                    var IPRange = new IPAddressOrRange(IPAdd);
+                    string sasBlobToken = null;
 
                     //Generate the shared access signature on the blob, setting the constraints directly on the signature.
-                    string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints, null, null, null, IPRange);
-
+                    
+                    var IPAdd = GetIPAddress();
+                    if (!String.IsNullOrEmpty(IPAdd)) 
+                    {
+                      var IPRange = new IPAddressOrRange(IPAdd);
+                      sasBlobToken = blob.GetSharedAccessSignature(sasConstraints, null, null, null, IPRange);
+                    }
+                    else
+                    {
+                      sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
+                    }
+                    
                     //Return the URI string for the container, including the SAS token.
                     thumbnailUrls.Add(blob.Uri + sasBlobToken);
 
@@ -114,6 +123,23 @@ namespace ImageResizeWebApp.Helpers
             while (continuationToken != null);
 
             return await Task.FromResult(thumbnailUrls);
+        }
+        
+        protected static string GetIPAddress()
+        {
+          System.Web.HttpContext context = System.Web.HttpContext.Current; 
+          string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+          if (!string.IsNullOrEmpty(ipAddress))
+          {
+            string[] addresses = ipAddress.Split(',');
+            if (addresses.Length != 0)
+            {
+              return addresses[0];
+            }
+          }
+
+          return context.Request.ServerVariables["REMOTE_ADDR"];
         }
     }
 }
