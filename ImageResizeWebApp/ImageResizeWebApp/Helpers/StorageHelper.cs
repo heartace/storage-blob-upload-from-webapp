@@ -10,9 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Http.Features;
-using System.Net;
-
 namespace ImageResizeWebApp.Helpers
 {
     public static class StorageHelper
@@ -130,9 +127,19 @@ namespace ImageResizeWebApp.Helpers
         
         private static string GetIPAddress()
         {
-          var connection = HttpContext.Features.Get<IHttpConnectionFeature>();
-          IPAddress clientIP = connection.RemoteIpAddress;
-          return clientIP.ToString();
+          System.Web.HttpContext context = System.Web.HttpContext.Current; 
+          string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+          if (!string.IsNullOrEmpty(ipAddress))
+          {
+            string[] addresses = ipAddress.Split(',');
+            if (addresses.Length != 0)
+            {
+              return addresses[0];
+            }
+          }
+
+          return context.Request.ServerVariables["REMOTE_ADDR"];
         }
     }
 }
