@@ -51,7 +51,7 @@ namespace ImageResizeWebApp.Helpers
         }
 
 
-        public static async Task<List<string>> GetThumbNailUrls(AzureStorageConfig _storageConfig)
+        public static async Task<List<string>> GetThumbNailUrls(AzureStorageConfig _storageConfig, string clientIPAddress)
         {
             List<string> thumbnailUrls = new List<string>();
 
@@ -99,8 +99,8 @@ namespace ImageResizeWebApp.Helpers
                     string sasBlobToken = null;
 
                     //Generate the shared access signature on the blob, setting the constraints directly on the signature.
-                    
-                    var IPAdd = GetIPAddress();
+
+                    var IPAdd = clientIPAddress;
                     if (!String.IsNullOrEmpty(IPAdd)) 
                     {
                       var IPRange = new IPAddressOrRange(IPAdd);
@@ -127,19 +127,7 @@ namespace ImageResizeWebApp.Helpers
         
         private static string GetIPAddress()
         {
-          System.Web.HttpContext context = System.Web.HttpContext.Current; 
-          string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-
-          if (!string.IsNullOrEmpty(ipAddress))
-          {
-            string[] addresses = ipAddress.Split(',');
-            if (addresses.Length != 0)
-            {
-              return addresses[0];
-            }
-          }
-
-          return context.Request.ServerVariables["REMOTE_ADDR"];
+            return "";
         }
     }
 }
