@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage.IPAddressOrRange;
 
 using System;
 using System.Collections.Generic;
@@ -96,8 +97,11 @@ namespace ImageResizeWebApp.Helpers
 
                     sasConstraints.Permissions = SharedAccessBlobPermissions.Read;
 
+                    var IPAdd = "114.84.158.184";
+                    var IPRange = new IPAddressOrRange(IPAdd);
+
                     //Generate the shared access signature on the blob, setting the constraints directly on the signature.
-                    string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
+                    string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints, null, null, null, IPRange);
 
                     //Return the URI string for the container, including the SAS token.
                     thumbnailUrls.Add(blob.Uri + sasBlobToken);
